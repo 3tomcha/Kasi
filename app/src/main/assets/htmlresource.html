@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+
+
+</head>
+
+
+<body>
+<script src="file:///android_asset/jquery-3.2.1.min.js"></script>
+<script src="file:///android_asset/jquery.xdomainajax.js"></script>
+
+<script>
+var promiseBuyApple = function() {
+
+            var url_array = [];
+            $.when(
+                    $.ajax({
+                        url: 'https://www.uta-net.com/artist/19868/',
+                        type: 'GET',
+                        success: function(data) {
+                            content = $($(data.responseText).text()).find('tr');
+                            content = content.find('td.td1');
+                            content = content.find('a:first-child');
+                            var length = content.length;
+                            console.log(length);
+
+
+                            for (i = 0; i < content.length; i++) {
+                                console.log($(content[i]).attr('href'));
+
+                                var llic_name = content[i].innerHTML;
+                                var url_string = $(content[i]).attr('href');
+                                Android.putLlicName(llic_name);
+                                url_array.push("https://www.uta-net.com" + url_string);
+                                Android.putURLList(url_array[i]);
+
+                            }
+                            console.log(url_array[0]);
+                            <!--Android.putURL(url_array[0]);-->
+
+                        }
+                    }))
+                .done(function() {
+                    return new Promise(function(resolve, reject) {
+                        resolve(functionB(url_array[0]));
+                    })
+                });
+
+        }
+
+        promiseBuyApple(400);
+
+        function functionB(url_list) {
+            $.ajax({
+                url: url_list,
+                type: 'GET',
+                success: function(data) {
+                    content = $($(data.responseText).text());
+                    content = content.find('#kashi_area');
+                    content = content[0].innerHTML;
+
+                    var data_array = content.split('<br>'); // 改行コードで分割
+                    var len = data_array.length;
+
+                    for (var i = 0; i < len; i++) {
+                        console.log(data_array[i]);
+                    Android.putLlic(data_array[i].trim());
+                    }
+
+                    var random_num = Math.floor(Math.random() * len);
+                    $('div').text(data_array[random_num]);
+
+
+
+                }
+            });
+        }
+
+    </script>
+
+
+
+<div>処理中</div>
+</body>
+
+</html>
